@@ -1,0 +1,7 @@
+#
+# List all failed access attempts. Obtain Client IP from CallerIPAddress column
+#
+AzureDiagnostics
+| where ResourceProvider =="MICROSOFT.KEYVAULT"
+| where httpStatusCode_d > 300 and not(OperationName == "Authentication" and httpStatusCode_d  == 401)
+| order by TimeGenerated desc
