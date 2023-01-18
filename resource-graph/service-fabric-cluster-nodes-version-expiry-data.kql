@@ -1,0 +1,5 @@
+# basic query to list out resource Name and ExpiryDate of Nodes in SF Clusters
+resources
+| project name, ExpiryDate= parse_json(properties).availableClusterVersions[0].supportExpiryUtc, type
+| where type == "microsoft.servicefabric/clusters"
+| project name, ExpiryDate
