@@ -3,3 +3,14 @@ resources
 | project name, ExpiryDate= parse_json(properties).availableClusterVersions[0].supportExpiryUtc, type
 | where type == "microsoft.servicefabric/clusters"
 | project name, ExpiryDate
+
+# pulling out the expiry of the version installed on the node
+resources
+| project properties,name, type, clusterCodeVersion = parse_json(properties).clusterCodeVersion, expiryArray = parse_json(properties).availableClusterVersions
+| where type == "microsoft.servicefabric/clusters"
+| extend newField = parse_json(properties)
+| extend arrays = newField.availableClusterVersions
+| project name, expiryArray, clusterCodeVersion
+| mv-expand ourVersion=parse_json(expiryArray)
+| where ourVersion.codeVersion == tostring(clusterCodeVersion)
+| project name, supportExpiryUtc=ourVersion.supportExpiryUtc, clusterCodeVersion
