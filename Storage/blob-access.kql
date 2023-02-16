@@ -1,0 +1,10 @@
+#
+# Project list of security principals read/write/delete blob objects
+# Ideal for establishing who has been accessing blobs when you have PublicAccess disables, Account key access disabled, public network access disabled, Private Endpoints
+#
+
+StorageBlobLogs 
+| project TimeGenerated, AccountName, OperationName, AuthenticationType, StatusCode, CallerIpAddress, RequesterUpn, RequesterObjectId, ObjectKey, TlsVersion
+| where OperationName == 'GetBlob'
+| where array_index_of( range(200,299), toint(StatusCode)) > -1
+| order by TimeGenerated desc
