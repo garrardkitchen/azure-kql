@@ -4,7 +4,9 @@
 #
 
 StorageBlobLogs 
-| project TimeGenerated, AccountName, OperationName, AuthenticationType, StatusCode, CallerIpAddress, RequesterUpn, RequesterObjectId, ObjectKey, TlsVersion
-| where OperationName == 'GetBlob'
+| project TimeGenerated, AccountName, OperationName, Category, RequesterObjectId, AuthenticationType, StatusCode, CallerIpAddress, RequesterUpn, ObjectKey, TlsVersion
+| where OperationName in ( 'GetBlob', 'PutBlob', 'DeleteBlob')
+| where AccountName == "niamcisharedstorage"
+| where RequesterObjectId != ""
 | where array_index_of( range(200,299), toint(StatusCode)) > -1
 | order by TimeGenerated desc
